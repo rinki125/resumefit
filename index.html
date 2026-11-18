@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ResumeFit – AI Resume Analyser & Job Match</title>
+<meta name="description" content="Upload your resume, paste a job description and get a match score, missing skills, ATS checks and interview questions.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📄</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f7f8;--surface:#fff;--ink:#12343b;--muted:#566b72;--line:#d5e0e3;--ok:#177a58;--okbg:#dcf3ea;--gap:#9a5400;--gapbg:#fcebd0;--acc:#12343b;--onacc:#fff;--hero:#e6f0f2;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1a1e;--surface:#152a30;--ink:#e6f0f2;--muted:#94abb2;--line:#2a444b;--ok:#5fd1a3;--okbg:#17382d;--gap:#f0b25a;--gapbg:#3a2b12;--acc:#e6f0f2;--onacc:#0d1a1e;--hero:#112328;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0d1a1e;--surface:#152a30;--ink:#e6f0f2;--muted:#94abb2;--line:#2a444b;--ok:#5fd1a3;--okbg:#17382d;--gap:#f0b25a;--gapbg:#3a2b12;--acc:#e6f0f2;--onacc:#0d1a1e;--hero:#112328;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.6 "Schibsted Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:inherit}
+.w{max-width:1060px;margin:0 auto;padding:0 20px}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+nav{display:flex;align-items:center;gap:22px;height:60px}
+.logo{font-weight:800;font-size:20px;text-decoration:none;margin-right:auto;letter-spacing:-.02em}
+nav a.l{text-decoration:none;color:var(--muted);font-size:15px;font-weight:500}
+nav a.l:hover{color:var(--ink)}
+@media (max-width:640px){nav a.l{display:none}}
+.btn{display:inline-block;font:700 16px inherit;font-family:inherit;text-decoration:none;border-radius:8px;padding:13px 22px;cursor:pointer;border:1.5px solid var(--acc);background:var(--acc);color:var(--onacc)}
+.btn.sm{padding:8px 16px;font-size:14px}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn:focus-visible,textarea:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid var(--ok);outline-offset:2px}
+section{padding:76px 0}
+h1{font-size:clamp(36px,6.4vw,66px);line-height:1.04;letter-spacing:-.035em;font-weight:800;margin:0 0 18px}
+h2{font-size:clamp(26px,4vw,38px);line-height:1.15;letter-spacing:-.025em;margin:0 0 12px;font-weight:800}
+h3{font-size:18px;margin:0 0 4px}
+.sub{color:var(--muted);max-width:58ch;font-size:18px;margin:0 0 28px}
+/* hero */
+#home{background:var(--hero);padding:64px 0 80px}
+.hg{display:grid;grid-template-columns:1.05fr .95fr;gap:44px;align-items:center}
+@media (max-width:860px){.hg{grid-template-columns:1fr}}
+.cta{display:flex;gap:12px;flex-wrap:wrap}
+.proof{margin:22px 0 0;color:var(--muted);font-size:14px}
+.paper{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:26px 24px 22px;font-size:14.5px;line-height:1.9;box-shadow:0 18px 40px -22px rgba(18,52,59,.45)}
+.paper b{display:block;font-size:16px;margin-bottom:2px}
+mark{padding:1px 6px;border-radius:5px;font-weight:600;background:var(--okbg);color:var(--ok)}
+mark.g{background:var(--gapbg);color:var(--gap)}
+.badge{position:absolute;right:-10px;top:-22px;width:92px;height:92px;border-radius:50%;background:var(--acc);color:var(--onacc);display:grid;place-content:center;text-align:center;font-weight:800;font-size:30px;line-height:1;box-shadow:0 10px 24px -10px rgba(0,0,0,.5)}
+.badge small{display:block;font-size:11px;font-weight:500;margin-top:3px}
+.miss{margin-top:12px;font-size:13.5px;color:var(--muted)}
+/* features */
+.fl{display:grid;grid-template-columns:1fr 1fr;gap:0 48px;margin-top:30px}
+@media (max-width:760px){.fl{grid-template-columns:1fr}}
+.fl div{border-top:1.5px solid var(--line);padding:18px 0 22px}
+.fl p{margin:0;color:var(--muted);font-size:16px}
+/* steps */
+.st{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:30px;counter-reset:s}
+@media (max-width:760px){.st{grid-template-columns:1fr}}
+.st div::before{counter-increment:s;content:counter(s);display:grid;place-content:center;width:38px;height:38px;border-radius:50%;background:var(--acc);color:var(--onacc);font-weight:800;margin-bottom:12px}
+.st p{margin:0;color:var(--muted);font-size:16px}
+/* tool */
+#tool{background:var(--surface);border-block:1px solid var(--line)}
+.ig{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:26px}
+@media (max-width:760px){.ig{grid-template-columns:1fr}}
+.lb{display:flex;justify-content:space-between;align-items:center;gap:8px;font-weight:700;margin-bottom:8px;font-size:15px}
+.up{font:500 13px inherit;font-family:inherit;color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+textarea{width:100%;min-height:240px;resize:vertical;padding:14px;border:1.5px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:15px/1.55 inherit}
+textarea.over{border-color:var(--ok);background:var(--okbg)}
+.cnt{font-size:13px;color:var(--muted);margin-top:4px}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;align-items:center}
+#msg{color:var(--gap);font-size:14px;min-height:22px;margin-top:10px}
+#out{margin-top:30px}
+.panel{border:1px solid var(--line);border-radius:10px;padding:20px;margin-bottom:14px;background:var(--bg)}
+.panel h3{font-size:19px;margin-bottom:10px}
+.res{display:flex;gap:26px;align-items:center;flex-wrap:wrap}
+.ring{width:140px;height:140px;flex:none}
+.ring text{font:800 32px "Schibsted Grotesk",system-ui,sans-serif;fill:var(--ink)}
+.res p{margin:3px 0;color:var(--muted)}
+.big{font-size:24px;font-weight:800;color:var(--ink)!important}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:4px 12px;border-radius:99px;font-size:14px;font-weight:500}
+.chip.ok{background:var(--okbg);color:var(--ok)}.chip.gap{background:var(--gapbg);color:var(--gap)}
+.bar{display:grid;grid-template-columns:170px 1fr 44px;gap:12px;align-items:center;margin:9px 0;font-size:15px}
+@media (max-width:520px){.bar{grid-template-columns:110px 1fr 40px}}
+.track{height:10px;background:var(--line);border-radius:6px;overflow:hidden}
+.fill{height:100%;background:var(--ok);border-radius:6px}
+ul.ck{list-style:none;padding:0;margin:0}
+ul.ck li{padding:7px 0 7px 28px;position:relative;border-bottom:1px solid var(--line);font-size:15.5px}
+ul.ck li:last-child{border:0}
+ul.ck li::before{position:absolute;left:2px;font-weight:800}
+ul.ck .y::before{content:"✓";color:var(--ok)}ul.ck .n::before{content:"!";color:var(--gap)}
+ol.q{padding-left:20px;margin:0}ol.q li{margin:9px 0}
+.mt{color:var(--muted);font-size:14.5px}
+/* about */
+.fm{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;font-size:14.5px;margin:18px 0;overflow-x:auto;white-space:pre}
+details{border-top:1.5px solid var(--line);padding:14px 0}
+details:last-of-type{border-bottom:1.5px solid var(--line)}
+summary{cursor:pointer;font-weight:700}
+details p{margin:8px 0 0;color:var(--muted);font-size:16px}
+footer{padding:36px 0 56px;color:var(--muted);font-size:14.5px;text-align:center}
+@media print{header,#home,#features,#how,#about,footer,.ig,.row,#msg,.sec-head{display:none!important}section{padding:0}body{background:#fff}}
+</style>
+</head>
+<body>
+<header><div class="w"><nav>
+  <a class="logo" href="#home">ResumeFit</a>
+  <a class="l" href="#features">Features</a><a class="l" href="#how">How it works</a><a class="l" href="#about">Under the hood</a>
+  <a class="btn sm" href="#tool">Try it free</a>
+</nav></div></header>
+
+<section id="home"><div class="w hg">
+  <div>
+    <h1>Check how well your resume fits the job before you apply.</h1>
+    <p class="sub">Upload your resume, paste a job description and get a match score, the skills you’re missing, ATS checks and interview questions. It’s free, and your resume never leaves your device.</p>
+    <div class="cta"><a class="btn" href="#tool">Analyse my resume</a><a class="btn ghost" href="#how">See how it works</a></div>
+    <p class="proof">Works with PDF and text resumes. No sign-up.</p>
+  </div>
+  <div class="paper" aria-label="Example of an analysed resume">
+    <div class="badge">78%<small>match</small></div>
+    <b>Priya Sharma</b>B.Tech Computer Science, 3rd year<br>
+    Built a <mark>React</mark> and <mark>Flask</mark> app used by 120 students. Trained a <mark>machine learning</mark> model with <mark>Pandas</mark> reaching 87% accuracy. Version control with <mark>Git</mark> and <mark>SQL</mark> databases.
+    <div class="miss">Job asks for: <mark class="g">Docker</mark> <mark class="g">TypeScript</mark> <mark class="g">AWS</mark></div>
+  </div>
+</div></section>
+
+<section id="features"><div class="w">
+  <h2>Everything you need to fix your resume</h2>
+  <p class="sub">One analysis, five answers.</p>
+  <div class="fl">
+    <div><h3>Job match score</h3><p>A single percentage that combines skill coverage with how closely your wording matches the job description.</p></div>
+    <div><h3>Missing skills</h3><p>See exactly which required skills your resume doesn’t mention, so you know what to add or learn.</p></div>
+    <div><h3>ATS check</h3><p>Nine quick checks for contact details, sections, length, action verbs and measurable results.</p></div>
+    <div><h3>Best-fit roles</h3><p>Find out which roles your skills fit best, from Data Analyst to Full Stack Developer.</p></div>
+    <div><h3>Interview questions</h3><p>Practise with questions written from your own projects and skills.</p></div>
+    <div><h3>Private by design</h3><p>All analysis runs in your browser. Nothing is uploaded to a server.</p></div>
+  </div>
+</div></section>
+
+<section id="how" style="padding-top:0"><div class="w">
+  <h2>How it works</h2>
+  <div class="st">
+    <div><h3>Add your resume</h3><p>Upload a PDF or text file, or paste the text.</p></div>
+    <div><h3>Add the job</h3><p>Paste the job description of the role you want.</p></div>
+    <div><h3>Read your report</h3><p>Get your score, gaps and interview questions in seconds.</p></div>
+  </div>
+</div></section>
+
+<section id="tool"><div class="w">
+  <h2>Analyse your resume</h2>
+  <p class="sub" style="margin-bottom:0">Not sure where to start? Choose “Try a sample”.</p>
+  <div class="ig">
+    <div>
+      <div class="lb"><label for="resume">Your resume</label><button class="up" data-for="resume">Upload PDF or TXT</button></div>
+      <textarea id="resume" placeholder="Paste your resume here, or drop a file on this box"></textarea><div class="cnt" id="c1">0 words</div>
+    </div>
+    <div>
+      <div class="lb"><label for="jd">Job description</label><button class="up" data-for="jd">Upload PDF or TXT</button></div>
+      <textarea id="jd" placeholder="Paste the job description here"></textarea><div class="cnt" id="c2">0 words</div>
+    </div>
+  </div>
+  <input type="file" id="file" accept=".pdf,.txt,.md,text/plain,application/pdf" hidden>
+  <div class="row"><button class="btn" id="go">Analyse resume</button><button class="btn ghost" id="demo">Try a sample</button><button class="btn ghost" id="clear">Clear</button></div>
+  <div id="msg" role="status"></div>
+  <div id="out" aria-live="polite"></div>
+</div></section>
+
+<section id="about"><div class="w">
+  <h2>Under the hood</h2>
+  <p class="sub">Built as a B.Tech mini project with plain HTML, CSS and JavaScript. No framework, no backend.</p>
+  <div class="fm">score = 0.65 × skill coverage + 0.35 × cosine similarity
+cosine(A, B) = (A · B) / (‖A‖ × ‖B‖)    on TF-IDF vectors</div>
+  <details><summary>How is the text compared?</summary><p>Both documents are cleaned, split into words and stripped of stop words. Each word gets a TF-IDF weight, then the cosine of the angle between the two vectors shows how similar they are.</p></details>
+  <details><summary>How are skills found?</summary><p>A dictionary of 50+ skills with aliases (for example “js” for JavaScript) is matched against both texts. Skills in the job description but not in the resume are your gaps.</p></details>
+  <details><summary>Is my data stored?</summary><p>No. Everything runs in your browser and nothing is sent to any server. PDF reading loads the open-source pdf.js library from a CDN.</p></details>
+  <details><summary>What are the limits?</summary><p>Scanned PDFs (images) can’t be read, so paste the text instead. Skill detection only knows the built-in list, so very niche skills won’t be flagged.</p></details>
+</div></section>
+
+<footer><div class="w">ResumeFit · B.Tech Mini Project by <strong>Your Name</strong> · <a href="https://github.com/your-username/resumefit">View on GitHub</a></div></footer>
+
+<script>
+const PDFJS="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js",WORKER="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+const SKILLS=[["python"],["java"],["javascript","js"],["typescript"],["c++"],["c#"],["sql"],["mysql"],["postgresql","postgres"],["mongodb"],["html"],["css"],["react","reactjs","react.js"],["node.js","nodejs","node"],["express","express.js"],["django"],["flask"],["spring boot","spring"],["git"],["github"],["docker"],["kubernetes","k8s"],["aws"],["azure"],["linux"],["rest api","rest","restful"],["machine learning","ml"],["deep learning"],["nlp","natural language processing"],["tensorflow"],["pytorch"],["scikit-learn","sklearn"],["pandas"],["numpy"],["data structures"],["algorithms"],["oop","object oriented"],["tableau"],["power bi"],["excel"],["statistics"],["data analysis","data analytics"],["data visualization"],["figma"],["ci/cd","jenkins"],["agile","scrum"],["junit"],["selenium"],["testing","unit testing"],["tailwind","tailwind css"],["redux"],["jira"],["terraform"],["opencv","computer vision"]];
+const ROLES=[
+ {n:"Data Analyst",s:["python","sql","excel","pandas","statistics","tableau","power bi","data visualization","data analysis"]},
+ {n:"Machine Learning Engineer",s:["python","machine learning","deep learning","tensorflow","pytorch","scikit-learn","numpy","pandas","statistics","docker"]},
+ {n:"Full Stack Developer",s:["javascript","react","node.js","express","mongodb","html","css","git","rest api","sql"]},
+ {n:"Java Backend Developer",s:["java","spring boot","mysql","rest api","oop","data structures","git","junit","docker"]},
+ {n:"Frontend Developer",s:["html","css","javascript","react","typescript","git","figma","redux","tailwind"]},
+ {n:"DevOps Engineer",s:["linux","docker","kubernetes","aws","ci/cd","git","terraform","python","azure"]},
+ {n:"QA Automation Engineer",s:["selenium","java","testing","junit","git","jira","agile","sql","ci/cd"]}];
+const STOP=new Set("a an the and or of to in on for with is are was were be been by as at from this that it its we you your our they their will can should would have has had not but if then than so such into about over per etc using use used".split(" "));
+const $=id=>document.getElementById(id);
+const clean=t=>t.toLowerCase().replace(/[^a-z0-9+#.\/\s-]/g," ");
+const tokens=t=>clean(t).split(/\s+/).map(w=>w.replace(/^[.\-\/]+|[.\-\/]+$/g,"")).filter(w=>w.length>1&&!STOP.has(w));
+function tfidf(docs){const toks=docs.map(tokens),N=docs.length,df={};
+  toks.forEach(t=>new Set(t).forEach(w=>df[w]=(df[w]||0)+1));
+  return toks.map(t=>{const tf={},v={};t.forEach(w=>tf[w]=(tf[w]||0)+1);for(const w in tf)v[w]=(tf[w]/t.length)*(Math.log((N+1)/(df[w]+1))+1);return v})}
+function cosine(a,b){let d=0,x=0,y=0;for(const k in a){x+=a[k]*a[k];if(b[k])d+=a[k]*b[k]}for(const k in b)y+=b[k]*b[k];return x&&y?d/Math.sqrt(x*y):0}
+const esc=s=>s.replace(/[.*+?^${}()|[\]\\\/]/g,"\\$&");
+function hasSkill(text,skill){const names=SKILLS.find(s=>s[0]===skill)||[skill],low=" "+text.toLowerCase()+" ";
+  return names.some(n=>new RegExp("(^|[^a-z0-9+#])"+esc(n)+"(?=$|[^a-z0-9+#])").test(low))}
+const found=t=>SKILLS.map(s=>s[0]).filter(s=>hasSkill(t,s));
+function ats(r){const w=r.trim().split(/\s+/).length,l=r.toLowerCase();
+  const verbs=["developed","built","designed","implemented","led","created","improved","reduced","increased","managed","deployed","optimized","analyzed","analysed","automated"].filter(v=>l.includes(v)).length;
+  const nums=(r.match(/\b\d+(\.\d+)?\s?(%|x|\+|k|users|ms|hours|projects)?/gi)||[]).length;
+  return [[/[\w.+-]+@[\w-]+\.[\w.]+/.test(r),"Email address found","Add a professional email address"],
+  [/(\+?\d[\d\s-]{8,}\d)/.test(r),"Phone number found","Add a phone number"],
+  [/education/.test(l),"Education section found","Add a clearly labelled Education section"],
+  [/experience|internship/.test(l),"Experience or internship section found","Add an Experience or Internship section"],
+  [/projects?/.test(l),"Projects section found","Add a Projects section with 2–3 strong projects"],
+  [/skills/.test(l),"Skills section found","Add a Skills section so ATS can read it easily"],
+  [w>=200&&w<=900,`Length is good (${w} words)`,`Length is ${w} words. Aim for 300–700`],
+  [verbs>=3,"Uses action verbs (built, developed, improved)","Start bullets with action verbs like built, designed, optimized"],
+  [nums>=3,"Includes numbers or measurable results","Add numbers: users served, % improvement, accuracy"]]}
+function questions(m,x){const q=[];
+  m.slice(0,4).forEach(s=>q.push(`You list ${s}. Describe a project where you used it and the hardest problem you solved.`));
+  if(m.length)q.push(`How would you explain ${m[0]} to a first-year student?`);
+  x.slice(0,2).forEach(s=>q.push(`This role asks for ${s}, which isn’t on your resume. How would you learn it in two weeks?`));
+  q.push("Walk me through your most challenging project: your role, your design choices and what you would change now.");
+  q.push("Tell me about a time you were stuck on a bug. How did you find the cause?");
+  return q.slice(0,8)}
+
+function msg(t){$("msg").textContent=t||""}
+function count(){[["resume","c1"],["jd","c2"]].forEach(([a,b])=>{const v=$(a).value.trim();$(b).textContent=(v?v.split(/\s+/).length:0)+" words"})}
+async function readPDF(file){
+  if(!window.pdfjsLib)await new Promise((ok,no)=>{const s=document.createElement("script");s.src=PDFJS;s.onload=ok;s.onerror=no;document.head.appendChild(s)});
+  if(!pdfjsLib.GlobalWorkerOptions.workerSrc){const w=await(await fetch(WORKER)).text();pdfjsLib.GlobalWorkerOptions.workerSrc=URL.createObjectURL(new Blob([w],{type:"text/javascript"}))}
+  const pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise;let t="";
+  for(let i=1;i<=pdf.numPages;i++){const c=await(await pdf.getPage(i)).getTextContent();t+=c.items.map(x=>x.str).join(" ")+"\n"}
+  return t}
+async function loadFile(file,target){
+  msg("Reading file…");
+  try{const t=/\.pdf$/i.test(file.name)?await readPDF(file):await file.text();
+    $(target).value=t.trim();count();
+    msg(t.trim()?"":"No text found. If this is a scanned PDF, paste the text instead.")}
+  catch(e){msg("Couldn’t read that file. Paste the text instead.")}}
+let current;
+document.querySelectorAll(".up").forEach(b=>b.onclick=()=>{current=b.dataset.for;$("file").click()});
+$("file").onchange=e=>{if(e.target.files[0])loadFile(e.target.files[0],current);e.target.value=""};
+["resume","jd"].forEach(id=>{const t=$(id);t.oninput=count;
+  t.ondragover=e=>{e.preventDefault();t.classList.add("over")};t.ondragleave=()=>t.classList.remove("over");
+  t.ondrop=e=>{e.preventDefault();t.classList.remove("over");if(e.dataTransfer.files[0])loadFile(e.dataTransfer.files[0],id)}});
+
+function analyse(){
+  const r=$("resume").value.trim(),j=$("jd").value.trim();
+  if(r.length<80||j.length<40){msg("Add your full resume and the job description, or choose Try a sample.");return}
+  msg("");$("go").textContent="Analysing…";$("go").disabled=true;
+  setTimeout(()=>{render(r,j);$("go").textContent="Analyse resume";$("go").disabled=false;
+    $("out").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"})},350)}
+function render(r,j){
+  const [vr,vj]=tfidf([r,j]),sim=Math.min(1,cosine(vr,vj)*2.2);
+  const req=found(j),have=req.filter(s=>hasSkill(r,s)),miss=req.filter(s=>!have.includes(s));
+  const cov=req.length?have.length/req.length:sim,score=Math.round(100*(0.65*cov+0.35*sim));
+  const label=score>=75?"Strong match":score>=50?"Fair match":"Needs work";
+  const C=2*Math.PI*54,rs=found(r);
+  const roles=ROLES.map(o=>({n:o.n,p:Math.round(100*o.s.filter(s=>hasSkill(r,s)).length/o.s.length)})).sort((a,b)=>b.p-a.p).slice(0,5);
+  const ck=ats(r),pass=ck.filter(a=>a[0]).length;
+  const chips=(a,c,e)=>a.length?`<div class="chips">${a.map(s=>`<span class="chip ${c}">${s}</span>`).join("")}</div>`:`<p class="mt">${e}</p>`;
+  const tip=miss.length?`Add ${miss.slice(0,3).join(", ")} if you genuinely have them. Otherwise build one small project with them first.`:"You cover every skill the job lists. Focus on adding numbers to your bullet points.";
+  $("out").innerHTML=`
+  <div class="panel res">
+    <svg class="ring" viewBox="0 0 140 140" role="img" aria-label="Match score ${score} percent"><circle cx="70" cy="70" r="54" fill="none" stroke="var(--line)" stroke-width="13"/><circle cx="70" cy="70" r="54" fill="none" stroke="${score>=50?"var(--ok)":"var(--gap)"}" stroke-width="13" stroke-linecap="round" stroke-dasharray="${C*score/100} ${C}" transform="rotate(-90 70 70)"/><text x="70" y="71" text-anchor="middle" dominant-baseline="middle">${score}%</text></svg>
+    <div><p class="big">${label}</p><p>${have.length} of ${req.length} skills from the job description appear on your resume.</p><p>Text similarity ${Math.round(sim*100)}%. ATS checks passed: ${pass} of ${ck.length}.</p><p><strong>Next step:</strong> ${tip}</p></div>
+  </div>
+  <div class="panel"><h3>Skills you already have</h3>${chips(have,"ok","None of the job’s skills were found in your resume.")}</div>
+  <div class="panel"><h3>Skills to add or learn</h3>${chips(miss,"gap","No gaps found. Nice work.")}</div>
+  <div class="panel"><h3>Best-fit roles for your resume</h3>${roles.map(o=>`<div class="bar"><span>${o.n}</span><div class="track"><div class="fill" style="width:${o.p}%"></div></div><b>${o.p}%</b></div>`).join("")}<p class="mt">Based on ${rs.length} skills found in your resume.</p></div>
+  <div class="panel"><h3>ATS check</h3><ul class="ck">${ck.map(a=>`<li class="${a[0]?"y":"n"}">${a[0]?a[1]:a[2]}</li>`).join("")}</ul></div>
+  <div class="panel"><h3>Interview questions to practise</h3><ol class="q">${questions(have.length?have:rs,miss).map(x=>`<li>${x}</li>`).join("")}</ol></div>
+  <div class="row"><button class="btn" onclick="window.print()">Print or save as PDF</button></div>`}
+
+$("go").onclick=analyse;
+$("clear").onclick=()=>{$("resume").value="";$("jd").value="";$("out").innerHTML="";msg("");count()};
+$("demo").onclick=()=>{
+  $("resume").value=`Priya Sharma
+priya.sharma@example.com | +91 98765 43210
+
+Education
+B.Tech Computer Science, 3rd year, CGPA 8.4
+
+Skills
+Python, Java, SQL, MySQL, HTML, CSS, JavaScript, React, Git, GitHub, Pandas, NumPy, Scikit-learn, Data Structures, OOP
+
+Projects
+Student Attendance System: built a React and Flask REST API app used by 120 students, reduced manual work by 60%.
+House Price Predictor: developed a machine learning model with Scikit-learn and Pandas, reaching 87% accuracy on 5000 records.
+Library Manager: designed a Java and MySQL desktop application with 15 tables.
+
+Internship
+Web development intern for 2 months. Implemented 4 responsive pages in React and improved load time by 30%.`;
+  $("jd").value=`Junior Full Stack Developer
+We are looking for a developer with strong JavaScript and React skills. You will build REST APIs using Node.js and Express, store data in MongoDB or SQL databases, and use Git for version control. Knowledge of Docker, TypeScript and AWS is a plus. Good understanding of data structures, testing and Agile practices is expected.`;
+  count();analyse()};
+</script>
+</body>
+</html>
